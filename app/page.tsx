@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Zap, BarChart2, Layers, Copy, Check, Share2, ArrowRight } from "lucide-react";
+import { SiteHeader } from "./components/site-header";
+import { SiteFooter } from "./components/site-footer";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -83,8 +85,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-[#e4e4e7]">
+      <SiteHeader />
+
       {/* Hero */}
-      <main className="relative flex flex-col items-center justify-center px-6 pt-24 pb-20 overflow-hidden">
+      <main className="relative flex flex-col items-center justify-center px-6 pt-32 pb-20 overflow-hidden">
         {/* Background gradient orbs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] opacity-30 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-72 h-72 bg-indigo-500/20 rounded-full blur-[120px]" />
@@ -92,19 +96,6 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 max-w-2xl mx-auto text-center">
-          {/* Logo */}
-          <div className="animate-fade-in-up mb-8">
-            <div className="inline-flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-semibold tracking-tight">
-                InstantFunnel
-                <span className="text-indigo-400">.ai</span>
-              </span>
-            </div>
-          </div>
-
           {/* Headline */}
           <h1 className="animate-fade-in-up delay-100 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-6 opacity-0">
             Build High-Converting Funnels{" "}
@@ -341,12 +332,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.04] py-8 px-6 text-center">
-        <p className="text-sm text-zinc-500">
-          InstantFunnel.ai — AI-powered funnels, built in seconds.
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
