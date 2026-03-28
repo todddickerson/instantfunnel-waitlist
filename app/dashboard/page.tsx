@@ -1,7 +1,23 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { redirect } from "next/navigation";
+import { Zap, LogOut, User } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  async function signOut() {
+    "use server";
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/");
+  }
+
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-[#e4e4e7] flex flex-col">
       {/* Background gradient orbs */}
@@ -23,16 +39,33 @@ export default function DashboardPage() {
         </Link>
 
         <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-12 text-center max-w-md">
+          <div className="w-14 h-14 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-5">
+            <User className="w-7 h-7 text-indigo-400" />
+          </div>
           <h1 className="text-3xl font-bold mb-3">Coming soon</h1>
-          <p className="text-zinc-400 mb-8">
+          <p className="text-zinc-400 mb-2">
             The dashboard is under construction. We&apos;ll notify you when it&apos;s ready.
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-colors"
-          >
-            Back to home
-          </Link>
+          <p className="text-sm text-zinc-500 mb-8">
+            Signed in as <span className="text-indigo-400 font-medium">{user.email}</span>
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-colors"
+            >
+              Back to home
+            </Link>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] text-zinc-300 font-medium transition-colors cursor-pointer w-full"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -29,6 +29,17 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Supabase Setup
+
+Before running the app, you need to create the required database tables. Run the migration in `supabase/migrations/001_auth_config.sql` via the **Supabase Dashboard SQL Editor**:
+
+1. Go to your Supabase project dashboard
+2. Navigate to **SQL Editor**
+3. Paste the contents of `supabase/migrations/001_auth_config.sql`
+4. Click **Run**
+
+This creates the `app_config` table (controls invite-only signup gate) and the `invites` table (stores invite codes).
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

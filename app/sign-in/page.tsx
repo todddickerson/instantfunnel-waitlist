@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Zap, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -18,9 +19,26 @@ export default function SignInPage() {
     setError("");
     setLoading(true);
 
-    // Stub: simulate a brief delay then redirect
-    await new Promise((r) => setTimeout(r, 600));
+    const supabase = createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setLoading(false);
+      if (signInError.message.includes("Email not confirmed")) {
+        setError("Please confirm your email before signing in.");
+      } else if (signInError.message.includes("Invalid login credentials")) {
+        setError("Invalid email or password.");
+      } else {
+        setError(signInError.message);
+      }
+      return;
+    }
+
     router.push("/dashboard");
+    router.refresh();
   };
 
   return (
