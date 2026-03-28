@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Zap, BarChart2, Layers, Copy, Check, Share2, ArrowRight } from "lucide-react";
+import { SiteHeader } from "./components/site-header";
+import { SiteFooter } from "./components/site-footer";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -83,8 +85,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-[#e4e4e7]">
+      <SiteHeader />
+
       {/* Hero */}
-      <main className="relative flex flex-col items-center justify-center px-6 pt-24 pb-20 overflow-hidden">
+      <main className="relative flex flex-col items-center justify-center px-6 pt-20 sm:pt-32 pb-20 overflow-hidden">
         {/* Background gradient orbs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] opacity-30 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-72 h-72 bg-indigo-500/20 rounded-full blur-[120px]" />
@@ -92,19 +96,6 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 max-w-2xl mx-auto text-center">
-          {/* Logo */}
-          <div className="animate-fade-in-up mb-8">
-            <div className="inline-flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-semibold tracking-tight">
-                InstantFunnel
-                <span className="text-indigo-400">.ai</span>
-              </span>
-            </div>
-          </div>
-
           {/* Headline */}
           <h1 className="animate-fade-in-up delay-100 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-6 opacity-0">
             Build High-Converting Funnels{" "}
@@ -120,7 +111,7 @@ export default function Home() {
           </p>
 
           {/* Bullets */}
-          <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4 justify-center mb-12 opacity-0">
+          <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4 justify-center mb-8 sm:mb-12 opacity-0">
             {[
               { icon: Zap, text: "Describe your product, get a funnel" },
               { icon: Layers, text: "Landing pages, upsells, and email flows" },
@@ -149,12 +140,12 @@ export default function Home() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-12 px-4 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white placeholder-zinc-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  className="flex-1 h-14 sm:h-12 px-4 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white placeholder-zinc-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all text-base"
                 />
                 <button
                   type="submit"
                   disabled={loading}
-                  className="h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed animate-pulse-glow"
+                  className="h-14 sm:h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed animate-pulse-glow"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -341,12 +332,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.04] py-8 px-6 text-center">
-        <p className="text-sm text-zinc-500">
-          InstantFunnel.ai — AI-powered funnels, built in seconds.
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
