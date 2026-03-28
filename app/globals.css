@@ -172,11 +172,11 @@ body {
 .delay-500 { animation-delay: 500ms; }
 .delay-600 { animation-delay: 600ms; }
 
-/* Cursor defaults */
+/* Cursor defaults — !important to override Tailwind preflight */
 a, button, [role="button"], label[for] {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 button:disabled {
-  cursor: not-allowed;
+  cursor: not-allowed !important;
 }

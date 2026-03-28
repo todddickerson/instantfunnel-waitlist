@@ -145,7 +145,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="h-14 sm:h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed animate-pulse-glow"
+                  className="h-14 sm:h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed animate-pulse-glow"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -189,7 +189,7 @@ export default function Home() {
                     />
                     <button
                       onClick={copyLink}
-                      className="h-10 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] transition-colors flex items-center gap-1.5"
+                      className="h-10 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                       {copied ? (
                         <Check className="w-4 h-4 text-green-400" />
@@ -205,7 +205,7 @@ export default function Home() {
                     href={`https://twitter.com/intent/tweet?text=${tweetText}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 h-10 rounded-lg bg-[#1d9bf0]/10 border border-[#1d9bf0]/20 hover:bg-[#1d9bf0]/20 transition-colors text-[#1d9bf0] text-sm font-medium"
+                    className="flex items-center justify-center gap-2 h-10 rounded-lg bg-[#1d9bf0]/10 border border-[#1d9bf0]/20 hover:bg-[#1d9bf0]/20 transition-colors text-[#1d9bf0] text-sm font-medium cursor-pointer"
                   >
                     <Share2 className="w-4 h-4" />
                     Share on Twitter
