@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Zap, ArrowRight, Eye, EyeOff, Lock } from "lucide-react";
+import { Zap, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignUpPage({
@@ -24,17 +24,6 @@ export default function SignUpPage({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Invite-only gate state
-  const [signupOpen, setSignupOpen] = useState<boolean | null>(null);
-  const [inviteCode, setInviteCode] = useState("");
-
-  useEffect(() => {
-    fetch("/api/signup-status")
-      .then((res) => res.json())
-      .then((data) => setSignupOpen(data.open))
-      .catch(() => setSignupOpen(false));
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -51,29 +40,6 @@ export default function SignUpPage({
 
     setLoading(true);
 
-    // If signup is closed, validate invite code first
-    if (signupOpen === false) {
-      if (!inviteCode.trim()) {
-        setError("InstantFunnel.ai is invite-only. Enter your invite code to continue.");
-        setLoading(false);
-        return;
-      }
-
-      const inviteRes = await fetch("/api/invite-check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: inviteCode.trim(), email }),
-      });
-      const inviteData = await inviteRes.json();
-
-      if (!inviteData.valid) {
-        setError(inviteData.error || "InstantFunnel.ai is invite-only. Enter your invite code to continue.");
-        setLoading(false);
-        return;
-      }
-    }
-
-    // Sign up with Supabase
     const supabase = createClient();
     const { error: signUpError } = await supabase.auth.signUp({
       email,
@@ -84,12 +50,6 @@ export default function SignUpPage({
       setLoading(false);
       setError(signUpError.message);
       return;
-    }
-
-    // If signup was open, close it after the first successful user
-    if (signupOpen === true) {
-      // Fire-and-forget: close signup after first user
-      fetch("/api/signup-status", { method: "POST" }).catch(() => {});
     }
 
     router.push(`/waitlist-confirmed?email=${encodeURIComponent(email)}`);
@@ -121,7 +81,7 @@ export default function SignUpPage({
           <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-8">
             <h1 className="text-2xl font-bold text-center mb-1">Create your account</h1>
             <p className="text-sm text-zinc-400 text-center mb-8">
-              Get early access to InstantFunnel.ai
+              Join the waitlist for early access
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -159,11 +119,7 @@ export default function SignUpPage({
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
@@ -187,38 +143,10 @@ export default function SignUpPage({
                     onClick={() => setShowConfirm(!showConfirm)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
                   >
-                    {showConfirm ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
+                    {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
-
-              {/* Invite code field — only shown when signup is closed */}
-              {signupOpen === false && (
-                <div>
-                  <label htmlFor="invite-code" className="block text-sm text-zinc-300 mb-1.5">
-                    Invite code
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="invite-code"
-                      type="text"
-                      required
-                      placeholder="Enter your invite code"
-                      value={inviteCode}
-                      onChange={(e) => setInviteCode(e.target.value)}
-                      className="w-full h-12 px-4 pl-10 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white placeholder-zinc-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm font-mono"
-                    />
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                  </div>
-                  <p className="text-xs text-zinc-500 mt-1">
-                    InstantFunnel.ai is invite-only during early access.
-                  </p>
-                </div>
-              )}
 
               {error && (
                 <p className="text-sm text-red-400">{error}</p>
@@ -226,14 +154,14 @@ export default function SignUpPage({
 
               <button
                 type="submit"
-                disabled={loading || signupOpen === null}
+                disabled={loading}
                 className="w-full h-12 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    Create Account
+                    Join Waitlist
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
