@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { Zap, LogIn } from "lucide-react";
 
 export function SiteHeader() {
   return (
@@ -26,6 +26,13 @@ export function SiteHeader() {
             className="text-sm text-zinc-400 hover:text-white transition-colors"
           >
             Compare
+          </Link>
+          <Link
+            href="/sign-in"
+            className="text-sm text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1.5"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            Sign In
           </Link>
           <Link
             href="/"

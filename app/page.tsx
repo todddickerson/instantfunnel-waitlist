@@ -1,28 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Zap, BarChart2, Layers, Copy, Check, Share2, ArrowRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Zap, BarChart2, Layers, ArrowRight } from "lucide-react";
 import { SiteHeader } from "./components/site-header";
 import { SiteFooter } from "./components/site-footer";
 
 export default function Home() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [position, setPosition] = useState<number | null>(null);
-  const [referralCode, setReferralCode] = useState("");
-  const [referralCount, setReferralCount] = useState(0);
-  const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [referredBy, setReferredBy] = useState<string | null>(null);
   const demoRef = useRef<HTMLDivElement>(null);
   const [demoVisible, setDemoVisible] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get("ref");
-    if (ref) setReferredBy(ref);
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -38,50 +26,10 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, referredBy }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-        return;
-      }
-
-      setPosition(data.position);
-      setReferralCode(data.referral_code);
-      setReferralCount(data.referral_count);
-      setSubmitted(true);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    router.push(`/sign-up?email=${encodeURIComponent(email)}`);
   };
-
-  const referralLink =
-    typeof window !== "undefined"
-      ? `${window.location.origin}?ref=${referralCode}`
-      : "";
-
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const tweetText = encodeURIComponent(
-    `I just joined the @InstantFunnelAI waitlist — AI-powered funnels in seconds. Join me:\n${referralLink}`
-  );
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-[#e4e4e7]">
@@ -127,98 +75,32 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Form / Result */}
-          {!submitted ? (
-            <div className="animate-fade-in-up delay-400 opacity-0">
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+          {/* Form */}
+          <div className="animate-fade-in-up delay-400 opacity-0">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+            >
+              <input
+                type="email"
+                required
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 h-14 sm:h-12 px-4 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white placeholder-zinc-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all text-base"
+              />
+              <button
+                type="submit"
+                className="h-14 sm:h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 cursor-pointer animate-pulse-glow"
               >
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-14 sm:h-12 px-4 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white placeholder-zinc-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all text-base"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="h-14 sm:h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed animate-pulse-glow"
-                >
-                  {loading ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      Join Waitlist
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </form>
-              {error && (
-                <p className="mt-3 text-sm text-red-400">{error}</p>
-              )}
-              <p className="mt-4 text-xs text-zinc-500">
-                No spam. Early access + founding member pricing.
-              </p>
-            </div>
-          ) : (
-            <div className="animate-scale-in max-w-md mx-auto">
-              <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-8">
-                <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-6 h-6 text-indigo-400" />
-                </div>
-                <h2 className="text-2xl font-bold mb-1">You&apos;re in!</h2>
-                <p className="text-zinc-400 mb-6">
-                  You&apos;re <span className="text-indigo-400 font-semibold">#{position}</span> on the waitlist
-                </p>
-
-                {/* Referral section */}
-                <div className="space-y-4">
-                  <p className="text-sm text-zinc-400">
-                    Share your link to move up the list:
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      readOnly
-                      value={referralLink}
-                      className="flex-1 h-10 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-300 outline-none font-mono truncate"
-                    />
-                    <button
-                      onClick={copyLink}
-                      className="h-10 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
-                    >
-                      {copied ? (
-                        <Check className="w-4 h-4 text-green-400" />
-                      ) : (
-                        <Copy className="w-4 h-4 text-zinc-400" />
-                      )}
-                      <span className="text-sm text-zinc-300">
-                        {copied ? "Copied" : "Copy"}
-                      </span>
-                    </button>
-                  </div>
-                  <a
-                    href={`https://twitter.com/intent/tweet?text=${tweetText}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 h-10 rounded-lg bg-[#1d9bf0]/10 border border-[#1d9bf0]/20 hover:bg-[#1d9bf0]/20 transition-colors text-[#1d9bf0] text-sm font-medium cursor-pointer"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Share on Twitter
-                  </a>
-                  {referralCount > 0 && (
-                    <p className="text-xs text-zinc-500 text-center">
-                      {referralCount} {referralCount === 1 ? "person has" : "people have"} joined through your link
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+                Join Waitlist
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+            <p className="mt-4 text-xs text-zinc-500">
+              No spam. Early access + founding member pricing.
+            </p>
+          </div>
         </div>
       </main>
 
