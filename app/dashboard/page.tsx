@@ -1,72 +1,56 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Zap, LogOut, User } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import {
+  Layers,
+  TrendingUp,
+  DollarSign,
+  Lightbulb,
+} from "lucide-react";
 
-export default async function DashboardPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+const stats = [
+  { label: "Active Funnels", value: "0", icon: Layers },
+  { label: "Avg Conversion", value: "\u2014", icon: TrendingUp },
+  { label: "Total Revenue", value: "\u2014", icon: DollarSign },
+  { label: "AI Suggestions", value: "0", icon: Lightbulb },
+];
 
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  async function signOut() {
-    "use server";
-    const supabase = await createClient();
-    await supabase.auth.signOut();
-    redirect("/");
-  }
-
+export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-[#e4e4e7] flex flex-col">
-      {/* Background gradient orbs */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] opacity-20">
-          <div className="absolute top-0 left-1/4 w-72 h-72 bg-indigo-500/20 rounded-full blur-[120px]" />
-          <div className="absolute top-20 right-1/4 w-64 h-64 bg-purple-500/15 rounded-full blur-[100px]" />
-        </div>
+    <div className="px-8 py-8 max-w-5xl">
+      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        {stats.map(({ label, value, icon: Icon }) => (
+          <div
+            key={label}
+            className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                <Icon className="w-[18px] h-[18px] text-indigo-400" />
+              </div>
+              <span className="text-sm text-zinc-400">{label}</span>
+            </div>
+            <p className="text-2xl font-semibold">{value}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12">
-        <Link href="/" className="inline-flex items-center gap-3 mb-12 hover:opacity-90 transition-opacity">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-semibold tracking-tight">
-            InstantFunnel<span className="text-indigo-400">.ai</span>
-          </span>
-        </Link>
-
-        <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-12 text-center max-w-md">
-          <div className="w-14 h-14 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-5">
-            <User className="w-7 h-7 text-indigo-400" />
-          </div>
-          <h1 className="text-3xl font-bold mb-3">Coming soon</h1>
-          <p className="text-zinc-400 mb-2">
-            The dashboard is under construction. We&apos;ll notify you when it&apos;s ready.
-          </p>
-          <p className="text-sm text-zinc-500 mb-8">
-            Signed in as <span className="text-indigo-400 font-medium">{user.email}</span>
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-colors"
-            >
-              Back to home
-            </Link>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] text-zinc-300 font-medium transition-colors cursor-pointer w-full"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign out
-              </button>
-            </form>
-          </div>
+      {/* Empty state */}
+      <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-12 text-center">
+        <div className="w-14 h-14 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-5">
+          <Layers className="w-7 h-7 text-indigo-400" />
         </div>
+        <h2 className="text-xl font-semibold mb-2">No funnels yet</h2>
+        <p className="text-zinc-400 max-w-sm mx-auto mb-6">
+          Describe your offer and AI builds your entire funnel in seconds.
+        </p>
+        <Link
+          href="/dashboard/build"
+          className="inline-flex items-center justify-center h-11 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium transition-colors"
+        >
+          Build Your First Funnel
+        </Link>
       </div>
     </div>
   );
